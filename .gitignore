@@ -8,3 +8,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Archivos de desarrollo / asistencia
+AGENTS.md
+ENUNCIADO.md
+gradle/gradle-daemon-jvm.properties
+

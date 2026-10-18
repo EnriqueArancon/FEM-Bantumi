@@ -22,6 +22,8 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Locale;
 
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
+import es.upm.miw.bantumi.ui.fragmentos.RestartGameDialog;
+
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.dominio.logica.JuegoBantumi;
 import es.upm.miw.bantumi.ui.viewmodel.BantumiViewModel;
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private void crearObservadores() {
         for (int i = 0; i < JuegoBantumi.NUM_POSICIONES; i++) {
             int finalI = i;
-            bantumiVM.getNumSemillas(i).observe(    // Huecos y almacenes
+            bantumiVM.getNumSemillas(i).observe( // Huecos y almacenes
                     this,
                     new Observer<Integer>() {
                         @Override
@@ -68,15 +70,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         }
-        bantumiVM.getTurno().observe(   // Turno
+        bantumiVM.getTurno().observe( // Turno
                 this,
                 new Observer<JuegoBantumi.Turno>() {
+
                     @Override
                     public void onChanged(JuegoBantumi.Turno turno) {
                         marcarTurno(juegoBantumi.turnoActual());
                     }
-                }
-        );
+
+                });
     }
 
     /**
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Muestra el valor <i>valor</i> en la posición <i>pos</i>
      *
-     * @param pos posición a actualizar
+     * @param pos   posición a actualizar
      * @param valor valor a mostrar
      */
     private void mostrarValor(int pos, int valor) {
@@ -136,15 +139,20 @@ public class MainActivity extends AppCompatActivity {
                     .setMessage(R.string.aboutMessage)
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
-        // } else if (itemId == R.id.opcAjustes) { // @TODO Preferencias
+        } else if (itemId == R.id.opcReiniciarPartida) {
+            new RestartGameDialog(getString(R.string.txtDialogoReiniciarTitulo)).show(getSupportFragmentManager(),
+                    "RESTART_DIALOG");
+
+            // } else if (itemId == R.id.opcAjustes) { // @TODO Preferencias
             // startActivity(new Intent(this, BantumiPrefs.class));
-        // @TODO!!! resto opciones
-        } else {
+            // @TODO!!! resto opciones
+        } else
+
+        {
             Snackbar.make(
                     findViewById(android.R.id.content),
                     getString(R.string.txtSinImplementar),
-                    Snackbar.LENGTH_LONG
-            ).show();
+                    Snackbar.LENGTH_LONG).show();
         }
         return true;
     }
@@ -167,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(LOG_TAG, "* Juega Computador");
                 juegoBantumi.juegaComputador();
                 break;
-            default:    // JUEGO TERMINADO
+            default: // JUEGO TERMINADO
                 finJuego();
         }
         if (juegoBantumi.juegoTerminado()) {

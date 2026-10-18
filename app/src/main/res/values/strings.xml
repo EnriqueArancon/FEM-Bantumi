@@ -21,7 +21,8 @@
     <!-- Acerca de -->
     <string name="aboutText">Acerca de</string>
     <string name="aboutTitle">¿Cómo se juega?</string>
-    <string name="aboutMessage"><p>Cada jugador elige una de sus 6 casillas -que no puede estar vacía-, recoge
+    <string name="aboutMessage">
+        <p>Cada jugador elige una de sus 6 casillas -que no puede estar vacía-, recoge
         todas las semillas que contenga y las “siembra” una a una en sentido contrario a las agujas del reloj
         en las siguientes casillas del tablero (excepto en el almacén del oponente). Se aplican las siguientes reglas:</p>
         <ul>
@@ -46,5 +47,9 @@
     <!-- Diálogo Final -->
     <string name="txtDialogoFinalTitulo">Fin del juego</string>
     <string name="txtDialogoFinalPregunta">¿Desea jugar otra partida?</string>
+
+    <!-- Diálogo Reiniciar Partida -->
+    <string name="txtDialogoReiniciarTitulo">Reiniciar partida</string>
+    <string name="txtDialogoReiniciarPregunta">¿Desea reiniciar la partida?</string>
 
 </resources>
