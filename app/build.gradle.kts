@@ -43,5 +43,7 @@ dependencies {
     // LiveData
     implementation(libs.androidx.lifecycle.livedata)
 
+    implementation(libs.androidx.preference)
+
     implementation(libs.androidx.lifecycle.livedata.core)
 }

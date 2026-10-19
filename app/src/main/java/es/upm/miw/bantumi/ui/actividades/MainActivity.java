@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.content.Intent;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -17,6 +18,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import java.io.BufferedReader;
@@ -60,6 +63,24 @@ public class MainActivity extends AppCompatActivity {
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
         juegoBantumi = new JuegoBantumi(bantumiVM, JuegoBantumi.Turno.turnoJ1, numInicialSemillas);
         crearObservadores();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        actualizarNombreJugador();
+    }
+
+    /**
+     * Lee el nombre del jugador guardado en Preferencias y lo muestra en el tablero
+     */
+    private void actualizarNombreJugador() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String nombre = sharedPrefs.getString("nombreJugador", getString(R.string.txtPlayer1));
+        TextView tvJugador1 = findViewById(R.id.tvPlayer1);
+        if (tvJugador1 != null && nombre != null && !nombre.trim().isEmpty()) {
+            tvJugador1.setText(nombre);
+        }
     }
 
     /**
@@ -151,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
             new RestartGameDialog(getString(R.string.txtDialogoReiniciarTitulo)).show(getSupportFragmentManager(),
                     "RESTART_DIALOG");
 
-            // } else if (itemId == R.id.opcAjustes) { // @TODO Preferencias
-            // startActivity(new Intent(this, BantumiPrefs.class));
-            // @TODO!!! resto opciones
+        } else if (itemId == R.id.opcAjustes) {
+            startActivity(new Intent(this, BantumiPrefs.class));
+
         } else if (itemId == R.id.opcGuardarPartida) {
             new SaveGameDialog(getString(R.string.txtDialogoGuardarTitulo)).show(getSupportFragmentManager(),
                     "SAVE_DIALOG");

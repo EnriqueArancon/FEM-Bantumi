@@ -1,81 +1,83 @@
 ================================================================================
-PRÁCTICA BANTUMI - PERSISTENCIA DE DATOS
+MEMORIA DE LA PRÁCTICA: BANTUMI (PERSISTENCIA DE DATOS)
 ================================================================================
 Alumno: Enrique Arancón López
-Titulación: Máster en Ingeniería Web (MIW)
+Máster en Ingeniería Web (MIW) - UPM
 Asignatura: Front-end para Móviles (FEM)
 ================================================================================
 
+A continuación explico paso a paso las funcionalidades que he ido desarrollando 
+en la práctica, cómo he organizado el código y las decisiones que he tomado:
+
+
 1. REINICIAR PARTIDA
 --------------------------------------------------------------------------------
-Para implementar esta opción, he creado una nueva clase llamada RestartGameDialog 
-en el paquete es.upm.miw.bantumi.ui.fragmentos, que extiende de DialogFragment, 
-siguiendo el mismo patrón y estructura que el profesor utilizó en FinalAlertDialog.
+Para la opción de reiniciar, me fijé en cómo el profesor había implementado el 
+diálogo de fin de partida (FinalAlertDialog) y creé una clase similar llamada 
+RestartGameDialog dentro del paquete ui.fragmentos, heredando de DialogFragment.
 
-Dentro de su método onCreateDialog() he configurado el diálogo mediante un 
-AlertDialog.Builder:
-- He añadido los textos del título y de la pregunta de confirmación en el archivo 
-  strings.xml (txtDialogoReiniciarTitulo y txtDialogoReiniciarPregunta) para no 
-  dejar cadenas hardcodeadas en el código.
-- En el botón positivo ("Aceptar"), obtengo la referencia a la actividad principal 
-  y llamo al método juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1) para que 
-  el tablero vuelva a su estado original con 4 semillas en cada casilla y los 
-  almacenes vacíos.
-- En el botón negativo ("Cancelar"), se pasa null para simplemente cerrar el 
-  diálogo y que la partida actual continúe sin ningún cambio.
+En su método onCreateDialog() monté un AlertDialog.Builder para pedir confirmación:
+- Definí en strings.xml el título y la pregunta ("¿Desea reiniciar la partida?") 
+  para no dejar cadenas sueltas en el código.
+- Si el usuario pulsa "Aceptar", recupero la actividad y llamo al método 
+  inicializar() del juego para volver a poner las 4 semillas por casilla y los 
+  almacenes a cero. Si pulsa "Cancelar", no hago nada y la partida sigue normal.
+- En MainActivity, capturé la opción del menú correspondiente (opcReiniciarPartida) 
+  para instanciar y mostrar este diálogo con el FragmentManager.
 
-Por último, en MainActivity.java he modificado el método onOptionsItemSelected() 
-para que al pulsar el icono de reiniciar en la barra de menú (R.id.opcReiniciarPartida) 
-se instancie y muestre este diálogo a través del FragmentManager con 
-getSupportFragmentManager().
 
 2. GUARDAR PARTIDA
 --------------------------------------------------------------------------------
-Para el guardado de la partida en el sistema de almacenamiento interno privado:
+Para guardar la partida en la memoria interna del teléfono:
 
-- En JuegoBantumi.java he completado el método serializa(), utilizando un 
-  StringBuilder para formatear el estado completo del juego como una cadena: 
-  primero el nombre del turno actual y a continuación los valores de las 14 
-  casillas separados por comas (ejemplo: "turnoJ1:4,4,4,4,4,4,0,4,4,4,4,4,4,0").
-- He definido la constante pública NOMBRE_FICHERO = "partida_bantumi.txt" en 
-  MainActivity para centralizar el nombre del fichero.
-- He implementado la clase SaveGameDialog en ui.fragmentos (extendiendo de 
-  DialogFragment), donde se muestra un diálogo de confirmación informando al 
-  usuario del fichero exacto en el que se almacenarán los datos.
-- En MainActivity.java he implementado el método guardarPartida(), que obtiene 
-  el juego serializado y abre el archivo con openFileOutput(NOMBRE_FICHERO, 
-  Context.MODE_PRIVATE) escribiendo los bytes a través de un FileOutputStream, 
-  siguiendo las directrices del Tema 3.1 de clase. Las posibles excepciones 
-  IOException están capturadas y se notifica al usuario mediante un Snackbar 
-  tanto en caso de éxito como si ocurriera algún error.
-- En strings.xml se han incorporado los textos del diálogo y las notificaciones 
-  de confirmación/error.
+- Primero completé el método serializa() en JuegoBantumi.java. Utilicé un 
+  StringBuilder para empaquetar el estado del juego en un formato sencillo de 
+  leer: primero el turno actual y luego las 14 casillas separadas por comas 
+  (por ejemplo, "turnoJ1:4,4,4,4,4,4,0,4,4,4,4,4,4,0").
+- En MainActivity declaré el nombre del archivo en una constante ("partida_bantumi.txt") 
+  e implementé el método guardarPartida(). Siguiendo lo visto en la teoría (Tema 3.1), 
+  abro el fichero con openFileOutput() en modo privado (MODE_PRIVATE) para que solo 
+  nuestra app pueda acceder, escribo los bytes y cierro el flujo. Si todo va bien 
+  aviso con un Snackbar, y si salta alguna excepción la capturo y muestro un aviso de error.
+- Además, creé un diálogo SaveGameDialog para que antes de guardar le confirme al 
+  usuario el nombre exacto del archivo donde se van a guardar los datos.
+
 
 3. RECUPERAR PARTIDA
 --------------------------------------------------------------------------------
-Para la recuperación del estado de la partida desde el almacenamiento interno:
+Para recuperar la partida guardada había que tener en cuenta varios casos:
 
-- En JuegoBantumi.java he desarrollado el método deserializa(String), que divide 
-  la cadena serializada separando el turno actual y las 14 casillas de semillas, 
-  actualizando el modelo del juego (y consecuentemente la interfaz a través de los 
-  LiveData observables del ViewModel).
-- También en JuegoBantumi.java he creado el método partidaModificada(), que 
-  comprueba si el tablero o el turno actual han sufrido cambios respecto al estado 
-  inicial de una partida nueva.
-- He creado la clase RecoverGameDialog en ui.fragmentos (subclase de DialogFragment) 
-  para solicitar confirmación al usuario antes de sobreescribir una partida modificada.
-- En MainActivity.java he implementado el método auxiliar leerLineaFichero() para 
-  leer la información del fichero con BufferedReader e InputStreamReader (siguiendo 
-  el patrón del Tema 3.1).
-- En onOptionsItemSelected(), al pulsar R.id.opcRecuperarPartida:
-  * Si el fichero no existe (File.exists()), se muestra un Snackbar avisando de 
-    que no hay partida guardada.
-  * Si la partida actual en pantalla tiene cambios no guardados respecto al fichero 
-    guardado (!juegoBantumi.serializa().equals(partidaGuardada) && juegoBantumi.partidaModificada()), 
-    se abre RecoverGameDialog para pedir confirmación.
-  * Si el tablero está intacto o ya coincide con lo guardado, se recupera 
-    directamente sin interrumpir al usuario.
-- En strings.xml se han incorporado los textos correspondientes para el diálogo y 
-  los avisos Snackbar.
+- En JuegoBantumi.java programé deserializa(), que hace el proceso inverso: 
+  corta el texto por los dos puntos para sacar el turno y por las comas para 
+  asignar las semillas a cada una de las 14 posiciones con setSemillas(). Como 
+  el ViewModel usa LiveData, el tablero de la pantalla se actualiza automáticamente.
+- También añadí en JuegoBantumi el método partidaModificada() para poder saber si 
+  el tablero actual tiene cambios respecto a una partida nueva.
+- En MainActivity implementé leerLineaFichero() con BufferedReader e InputStreamReader. 
+  Al pulsar la opción de recuperar:
+    * Si el fichero no existe en el almacenamiento, saco un Snackbar avisando de ello.
+    * Si la partida en pantalla tiene cambios respecto a lo que hay guardado en el 
+      fichero, abro un diálogo (RecoverGameDialog) para avisar al usuario de que va 
+      a perder su progreso actual si no lo desea.
+    * Si el tablero está intacto o es idéntico a lo que hay en el fichero, 
+      recupero directamente sin interrumpir.
 
 
+4. AJUSTES Y PREFERENCIAS (NOMBRE DEL JUGADOR)
+--------------------------------------------------------------------------------
+Para que el usuario pueda personalizar su nombre y que se quede guardado para 
+siempre en la app, implementé la pantalla de ajustes usando el sistema de 
+preferencias de Android (Tema 3.2):
+
+- Añadí la librería androidx.preference en Gradle y creé en res/xml/settings.xml 
+  el campo de texto (EditTextPreference) con la clave "nombreJugador", usando 
+  las cadenas que ya estaban en strings.xml.
+- Creé la actividad BantumiPrefs con su fragmento de preferencias (SettingsFragment) 
+  y la registré en el AndroidManifest.xml. Para que la pantalla se viera con los 
+  estilos correctos de Material 3, añadí la propiedad preferenceTheme en themes.xml. 
+  También le creé su layout con fitsSystemWindows para que la barra superior no 
+  tapara los textos al poner el móvil en horizontal.
+- Por último, en MainActivity conecté el botón de ajustes del menú para abrir la 
+  pantalla con un Intent, y aproveché el método onResume() del ciclo de vida para 
+  leer la preferencia con PreferenceManager cada vez que volvemos al juego y 
+  actualizar al momento el texto del Jugador 1 en el tablero.
