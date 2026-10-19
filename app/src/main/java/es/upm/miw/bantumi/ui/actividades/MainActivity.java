@@ -1,6 +1,7 @@
 package es.upm.miw.bantumi.ui.actividades;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,11 +19,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Locale;
 
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
+import es.upm.miw.bantumi.ui.fragmentos.RecoverGameDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RestartGameDialog;
 import es.upm.miw.bantumi.ui.fragmentos.SaveGameDialog;
 
@@ -152,15 +157,46 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.opcGuardarPartida) {
             new SaveGameDialog(getString(R.string.txtDialogoGuardarTitulo)).show(getSupportFragmentManager(),
                     "SAVE_DIALOG");
-        } else
+        } else if (itemId == R.id.opcRecuperarPartida) {
+            File archivo = new File(getFilesDir(), NOMBRE_FICHERO);
+            if (!archivo.exists()) {
+                Snackbar.make(
+                        findViewById(android.R.id.content),
+                        R.string.txtNoHayPartidaGuardada,
+                        Snackbar.LENGTH_SHORT).show();
+            } else {
+                // Leemos la partida guardada para comparar
+                String partidaGuardada = leerLineaFichero();
 
-        {
+                // Si el tablero actual es diferente a lo guardado Y se ha modificado la partida
+                // inicial
+                if (!juegoBantumi.serializa().equals(partidaGuardada) && juegoBantumi.partidaModificada()) {
+                    new RecoverGameDialog(getString(R.string.txtDialogoRecuperarTitulo))
+                            .show(getSupportFragmentManager(), "RECOVER_DIALOG");
+                } else {
+                    // No hay nada que perder: o es igual a lo guardado o el tablero estaba sin
+                    // tocar
+                    recuperarPartida();
+                }
+            }
+        } else {
             Snackbar.make(
                     findViewById(android.R.id.content),
                     getString(R.string.txtSinImplementar),
                     Snackbar.LENGTH_LONG).show();
         }
         return true;
+    }
+
+    private String leerLineaFichero() {
+        try {
+            BufferedReader fin = new BufferedReader(new InputStreamReader(openFileInput(NOMBRE_FICHERO)));
+            String linea = fin.readLine();
+            fin.close();
+            return linea;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**
@@ -224,6 +260,25 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(
                     findViewById(android.R.id.content),
                     R.string.txtPartidaGuardadaError,
+                    Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Recupera el estado guardado del juego desde el fichero interno
+     */
+    public void recuperarPartida() {
+        String linea = leerLineaFichero();
+        if (linea != null) {
+            juegoBantumi.deserializa(linea);
+            Snackbar.make(
+                    findViewById(android.R.id.content),
+                    R.string.txtPartidaRecuperadaExito,
+                    Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(
+                    findViewById(android.R.id.content),
+                    R.string.txtPartidaRecuperadaError,
                     Snackbar.LENGTH_SHORT).show();
         }
     }

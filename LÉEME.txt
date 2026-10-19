@@ -51,3 +51,31 @@ Para el guardado de la partida en el sistema de almacenamiento interno privado:
 - En strings.xml se han incorporado los textos del diálogo y las notificaciones 
   de confirmación/error.
 
+3. RECUPERAR PARTIDA
+--------------------------------------------------------------------------------
+Para la recuperación del estado de la partida desde el almacenamiento interno:
+
+- En JuegoBantumi.java he desarrollado el método deserializa(String), que divide 
+  la cadena serializada separando el turno actual y las 14 casillas de semillas, 
+  actualizando el modelo del juego (y consecuentemente la interfaz a través de los 
+  LiveData observables del ViewModel).
+- También en JuegoBantumi.java he creado el método partidaModificada(), que 
+  comprueba si el tablero o el turno actual han sufrido cambios respecto al estado 
+  inicial de una partida nueva.
+- He creado la clase RecoverGameDialog en ui.fragmentos (subclase de DialogFragment) 
+  para solicitar confirmación al usuario antes de sobreescribir una partida modificada.
+- En MainActivity.java he implementado el método auxiliar leerLineaFichero() para 
+  leer la información del fichero con BufferedReader e InputStreamReader (siguiendo 
+  el patrón del Tema 3.1).
+- En onOptionsItemSelected(), al pulsar R.id.opcRecuperarPartida:
+  * Si el fichero no existe (File.exists()), se muestra un Snackbar avisando de 
+    que no hay partida guardada.
+  * Si la partida actual en pantalla tiene cambios no guardados respecto al fichero 
+    guardado (!juegoBantumi.serializa().equals(partidaGuardada) && juegoBantumi.partidaModificada()), 
+    se abre RecoverGameDialog para pedir confirmación.
+  * Si el tablero está intacto o ya coincide con lo guardado, se recupera 
+    directamente sin interrumpir al usuario.
+- En strings.xml se han incorporado los textos correspondientes para el diálogo y 
+  los avisos Snackbar.
+
+

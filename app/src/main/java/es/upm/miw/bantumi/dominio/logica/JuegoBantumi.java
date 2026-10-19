@@ -222,6 +222,30 @@ public class JuegoBantumi {
      * @param juegoSerializado cadena que representa el estado completo del juego
      */
     public void deserializa(String juegoSerializado) {
-        // @TODO
+        String[] parts = juegoSerializado.split(":");
+        setTurno(Turno.valueOf(parts[0]));
+        String[] semillas = parts[1].split(",");
+        for (int i = 0; i < NUM_POSICIONES; i++) {
+            setSemillas(i, Integer.parseInt(semillas[i]));
+        }
+    }
+
+    /**
+     * Determina si la partida actual ha sido modificada respecto a su estado
+     * inicial
+     *
+     * @return true si la partida ha cambiado, false si está en el estado inicial
+     */
+    public boolean partidaModificada() {
+        if (turnoActual() != Turno.turnoJ1) {
+            return true;
+        }
+        for (int i = 0; i < NUM_POSICIONES; i++) {
+            int esperado = (i == 6 || i == 13) ? 0 : numInicialSemillas;
+            if (getSemillas(i) != esperado) {
+                return true;
+            }
+        }
+        return false;
     }
 }
