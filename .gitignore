@@ -13,4 +13,6 @@ local.properties
 AGENTS.md
 ENUNCIADO.md
 gradle/gradle-daemon-jvm.properties
+.vscode/
+
 
