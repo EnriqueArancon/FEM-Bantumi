@@ -18,11 +18,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
-
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
 
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RestartGameDialog;
+import es.upm.miw.bantumi.ui.fragmentos.SaveGameDialog;
 
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.dominio.logica.JuegoBantumi;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public JuegoBantumi juegoBantumi;
     private BantumiViewModel bantumiVM;
     int numInicialSemillas;
+    public static final String NOMBRE_FICHERO = "partida_bantumi.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
             // } else if (itemId == R.id.opcAjustes) { // @TODO Preferencias
             // startActivity(new Intent(this, BantumiPrefs.class));
             // @TODO!!! resto opciones
+        } else if (itemId == R.id.opcGuardarPartida) {
+            new SaveGameDialog(getString(R.string.txtDialogoGuardarTitulo)).show(getSupportFragmentManager(),
+                    "SAVE_DIALOG");
         } else
 
         {
@@ -199,4 +205,27 @@ public class MainActivity extends AppCompatActivity {
         // terminar
         new FinalAlertDialog(texto).show(getSupportFragmentManager(), "ALERT_DIALOG");
     }
+
+    /**
+     * Guarda el estado actual del juego en un fichero interno de la app
+     */
+    public void guardarPartida() {
+        try {
+            String textoJuego = juegoBantumi.serializa();
+            FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_PRIVATE);
+            fos.write(textoJuego.getBytes());
+            fos.close();
+            Snackbar.make(
+                    findViewById(android.R.id.content),
+                    R.string.txtPartidaGuardadaExito,
+                    Snackbar.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error guardando partida: " + e.getMessage());
+            Snackbar.make(
+                    findViewById(android.R.id.content),
+                    R.string.txtPartidaGuardadaError,
+                    Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
 }

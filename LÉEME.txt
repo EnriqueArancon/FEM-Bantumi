@@ -1,0 +1,53 @@
+================================================================================
+PRÁCTICA BANTUMI - PERSISTENCIA DE DATOS
+================================================================================
+Alumno: Enrique Arancón López
+Titulación: Máster en Ingeniería Web (MIW)
+Asignatura: Front-end para Móviles (FEM)
+================================================================================
+
+1. REINICIAR PARTIDA
+--------------------------------------------------------------------------------
+Para implementar esta opción, he creado una nueva clase llamada RestartGameDialog 
+en el paquete es.upm.miw.bantumi.ui.fragmentos, que extiende de DialogFragment, 
+siguiendo el mismo patrón y estructura que el profesor utilizó en FinalAlertDialog.
+
+Dentro de su método onCreateDialog() he configurado el diálogo mediante un 
+AlertDialog.Builder:
+- He añadido los textos del título y de la pregunta de confirmación en el archivo 
+  strings.xml (txtDialogoReiniciarTitulo y txtDialogoReiniciarPregunta) para no 
+  dejar cadenas hardcodeadas en el código.
+- En el botón positivo ("Aceptar"), obtengo la referencia a la actividad principal 
+  y llamo al método juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1) para que 
+  el tablero vuelva a su estado original con 4 semillas en cada casilla y los 
+  almacenes vacíos.
+- En el botón negativo ("Cancelar"), se pasa null para simplemente cerrar el 
+  diálogo y que la partida actual continúe sin ningún cambio.
+
+Por último, en MainActivity.java he modificado el método onOptionsItemSelected() 
+para que al pulsar el icono de reiniciar en la barra de menú (R.id.opcReiniciarPartida) 
+se instancie y muestre este diálogo a través del FragmentManager con 
+getSupportFragmentManager().
+
+2. GUARDAR PARTIDA
+--------------------------------------------------------------------------------
+Para el guardado de la partida en el sistema de almacenamiento interno privado:
+
+- En JuegoBantumi.java he completado el método serializa(), utilizando un 
+  StringBuilder para formatear el estado completo del juego como una cadena: 
+  primero el nombre del turno actual y a continuación los valores de las 14 
+  casillas separados por comas (ejemplo: "turnoJ1:4,4,4,4,4,4,0,4,4,4,4,4,4,0").
+- He definido la constante pública NOMBRE_FICHERO = "partida_bantumi.txt" en 
+  MainActivity para centralizar el nombre del fichero.
+- He implementado la clase SaveGameDialog en ui.fragmentos (extendiendo de 
+  DialogFragment), donde se muestra un diálogo de confirmación informando al 
+  usuario del fichero exacto en el que se almacenarán los datos.
+- En MainActivity.java he implementado el método guardarPartida(), que obtiene 
+  el juego serializado y abre el archivo con openFileOutput(NOMBRE_FICHERO, 
+  Context.MODE_PRIVATE) escribiendo los bytes a través de un FileOutputStream, 
+  siguiendo las directrices del Tema 3.1 de clase. Las posibles excepciones 
+  IOException están capturadas y se notifica al usuario mediante un Snackbar 
+  tanto en caso de éxito como si ocurriera algún error.
+- En strings.xml se han incorporado los textos del diálogo y las notificaciones 
+  de confirmación/error.
+
