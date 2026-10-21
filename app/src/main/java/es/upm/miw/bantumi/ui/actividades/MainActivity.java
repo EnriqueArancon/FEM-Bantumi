@@ -28,12 +28,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RecoverGameDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RestartGameDialog;
 import es.upm.miw.bantumi.ui.fragmentos.SaveGameDialog;
-
+import es.upm.miw.bantumi.datos.AppDatabase;
+import es.upm.miw.bantumi.datos.Puntuacion;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.dominio.logica.JuegoBantumi;
 import es.upm.miw.bantumi.ui.viewmodel.BantumiViewModel;
@@ -257,10 +260,21 @@ public class MainActivity extends AppCompatActivity {
             texto = "¡¡¡ EMPATE !!!";
         }
 
-        // @TODO guardar puntuación
+        guardarPuntuacion();
 
         // terminar
         new FinalAlertDialog(texto).show(getSupportFragmentManager(), "ALERT_DIALOG");
+    }
+
+    private void guardarPuntuacion() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String nombre = sharedPrefs.getString("nombreJugador", getString(R.string.txtPlayer1));
+        String fechaHora = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
+        int semillasJ1 = juegoBantumi.getSemillas(6);
+        int semillasJ2 = juegoBantumi.getSemillas(13);
+
+        Puntuacion puntuacion = new Puntuacion(nombre, fechaHora, semillasJ1, semillasJ2);
+        AppDatabase.getInstance(this).puntuacionDao().insert(puntuacion);
     }
 
     /**

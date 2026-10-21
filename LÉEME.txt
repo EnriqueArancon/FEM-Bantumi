@@ -81,3 +81,29 @@ preferencias de Android (Tema 3.2):
   pantalla con un Intent, y aproveché el método onResume() del ciclo de vida para 
   leer la preferencia con PreferenceManager cada vez que volvemos al juego y 
   actualizar al momento el texto del Jugador 1 en el tablero.
+
+
+5. GUARDAR PUNTUACIÓN (BASE DE DATOS CON ROOM)
+--------------------------------------------------------------------------------
+Para almacenar los resultados de las partidas al terminar, utilicé la biblioteca 
+Room de Android para gestionar una base de datos SQLite (Tema 3.4), que es lo 
+recomendado en el enunciado para optar a la máxima nota de la rúbrica (3.5 puntos):
+
+- Primero añadí las dependencias de room-runtime y room-compiler en el catálogo 
+  de Gradle (libs.versions.toml) y en el build.gradle.kts.
+- En el paquete datos creé las tres clases fundamentales de la arquitectura:
+    * Puntuacion.java: Es la entidad (@Entity) que representa la tabla "puntuaciones". 
+      Guarda el id autogenerado, el nombre del jugador, la fecha y hora, las semillas 
+      de cada almacén y el valor máximo de semillas para facilitar la ordenación.
+    * PuntuacionDao.java: La interfaz DAO (@Dao) con las operaciones para insertar 
+      nuevos registros (@Insert), consultar las 10 mejores partidas ordenadas de 
+      mayor a menor y borrar todo el histórico.
+    * AppDatabase.java: La base de datos abstracta (@Database) que extiende de 
+      RoomDatabase, implementada mediante un patrón Singleton (getInstance) y 
+      permitiendo consultas en el hilo principal según lo visto en clase.
+- Finalmente, en MainActivity.java conecté el guardado dentro de finJuego(), 
+  creando el método guardarPuntuacion(): lee el nombre del jugador desde los Ajustes, 
+  formatea la fecha y hora actual con SimpleDateFormat, toma las semillas de los 
+  almacenes 6 y 13 del tablero e inserta la puntuación en la base de datos a través 
+  del DAO.
+
