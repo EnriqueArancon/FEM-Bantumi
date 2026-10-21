@@ -34,7 +34,7 @@ public class RestartGameDialog extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                main.juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1);
+                                main.reiniciarPartida();
                             }
                         })
                 .setNegativeButton(

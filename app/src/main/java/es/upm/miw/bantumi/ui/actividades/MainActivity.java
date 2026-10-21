@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private BantumiViewModel bantumiVM;
     int numInicialSemillas;
     public static final String NOMBRE_FICHERO = "partida_bantumi.txt";
+    private boolean puntuacionGuardada = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,6 +204,8 @@ public class MainActivity extends AppCompatActivity {
                     recuperarPartida();
                 }
             }
+        } else if (itemId == R.id.opcMejoresResultados) {
+            startActivity(new Intent(this, MejoresResultadosActivity.class));
         } else {
             Snackbar.make(
                     findViewById(android.R.id.content),
@@ -229,6 +232,10 @@ public class MainActivity extends AppCompatActivity {
      * @param v Vista pulsada (hueco)
      */
     public void huecoPulsado(@NonNull View v) {
+        if (juegoBantumi.juegoTerminado()) {
+            return;
+        }
+
         String resourceName = getResources().getResourceEntryName(v.getId()); // pXY
         int num = Integer.parseInt(resourceName.substring(resourceName.length() - 2));
         Log.i(LOG_TAG, "huecoPulsado(" + resourceName + ") num=" + num);
@@ -260,7 +267,10 @@ public class MainActivity extends AppCompatActivity {
             texto = "¡¡¡ EMPATE !!!";
         }
 
-        guardarPuntuacion();
+        if (!puntuacionGuardada) {
+            guardarPuntuacion();
+            puntuacionGuardada = true;
+        }
 
         // terminar
         new FinalAlertDialog(texto).show(getSupportFragmentManager(), "ALERT_DIALOG");
@@ -306,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
         String linea = leerLineaFichero();
         if (linea != null) {
             juegoBantumi.deserializa(linea);
+            puntuacionGuardada = false;
             Snackbar.make(
                     findViewById(android.R.id.content),
                     R.string.txtPartidaRecuperadaExito,
@@ -316,6 +327,11 @@ public class MainActivity extends AppCompatActivity {
                     R.string.txtPartidaRecuperadaError,
                     Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    public void reiniciarPartida() {
+        juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1);
+        puntuacionGuardada = false;
     }
 
 }

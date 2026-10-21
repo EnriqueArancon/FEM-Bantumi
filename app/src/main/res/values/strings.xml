@@ -65,4 +65,12 @@
     <string name="txtPartidaRecuperadaError">Error al recuperar la partida</string>
     <string name="txtNoHayPartidaGuardada">No existe ninguna partida guardada</string>
 
+    <!-- Mejores Resultados -->
+    <string name="txtSinResultados">No hay partidas registradas</string>
+    <string name="txtOpcionBorrarTodo">Borrar todo</string>
+    <string name="txtDialogoBorrarTitulo">Borrar resultados</string>
+    <string name="txtDialogoBorrarPregunta">¿Desea eliminar todo el histórico de puntuaciones?</string>
+    <string name="txtResultadosBorrados">Resultados eliminados correctamente</string>
+
+
 </resources>

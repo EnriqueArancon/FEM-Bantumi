@@ -107,3 +107,39 @@ recomendado en el enunciado para optar a la máxima nota de la rúbrica (3.5 pun
   almacenes 6 y 13 del tablero e inserta la puntuación en la base de datos a través 
   del DAO.
 
+6. MEJORES RESULTADOS
+--------------------------------------------------------------------------------
+Para poder consultar el histórico de puntuaciones y ver las mejores partidas:
+
+- Creé la pantalla MejoresResultadosActivity y su diseño activity_mejores_resultados.xml:
+  * Utilicé un ListView para mostrar el listado y un TextView centrado que avisa con 
+    "No hay partidas registradas" si la base de datos está vacía. Aproveché el método 
+    nativo listView.setEmptyView() para que Android alterne entre la lista y el mensaje 
+    vacío de forma totalmente automática.
+  * También diseñé item_puntuacion.xml para maquetar cada fila del ranking de manera clara: 
+    a la izquierda la posición (#1, #2...), en el centro el nombre del jugador junto con 
+    la fecha y hora, y a la derecha el marcador de semillas de la partida.
+- Para rellenar la lista implementé un ArrayAdapter personalizado dentro de la actividad, 
+  que infla cada fila y asigna los datos de los objetos Puntuacion devueltos por el DAO 
+  (que ya los trae limitados al Top 10 y ordenados por mayor puntuación).
+- En la barra superior añadí la flecha para regresar al juego y un menú con el icono 
+  de una papelera (opcBorrarTodo).
+- Al pulsar la papelera, se abre un diálogo de confirmación (BorrarResultadosDialog, 
+  heredando de DialogFragment). Si el usuario confirma, llamo al método deleteAll() 
+  del DAO para vaciar la base de datos de Room, limpio el adaptador, refresco la vista 
+  y muestro un aviso con un Snackbar informando de que se han borrado los resultados.
+- Por último, registré la actividad en el AndroidManifest.xml y conecté la opción 
+  "Mejores resultados" en el menú principal de MainActivity.
+
+- Depuración y corrección durante las pruebas:
+  Al probar varias partidas en el emulador detecté un caso curioso: si al terminar 
+  la partida seguía tocando huecos en el tablero antes de reiniciar, la misma partida 
+  se guardaba duplicada en la base de datos (porque cada pulsación volvía a invocar 
+  a finJuego). Para blindarlo:
+  * Añadí un control al principio de huecoPulsado() para que, si el juego ha terminado, 
+    no procese ninguna pulsación extra.
+  * Implementé una bandera booleana puntuacionGuardada en MainActivity para asegurar 
+    que cada partida finalizada se guarda exactamente una sola vez en Room.
+  * Centralicé el reinicio en el método reiniciarPartida(), reseteando dicha bandera 
+    a false tanto al confirmar desde RestartGameDialog como al aceptar una nueva 
+    partida en FinalAlertDialog o al recuperar una partida guardada.
