@@ -76,5 +76,7 @@
     <string name="txtDialogoBorrarPregunta">¿Desea eliminar todo el histórico de puntuaciones?</string>
     <string name="txtResultadosBorrados">Resultados eliminados correctamente</string>
 
+    <!-- Cronómetro -->
+    <string name="txtCronometro">Tiempo de partida</string>
 
 </resources>

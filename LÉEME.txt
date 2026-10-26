@@ -200,4 +200,14 @@ opcionales de entre las propuestas en el enunciado:
   en las preferencias y se aplicará limpiamente en cuanto el usuario pulse en "Reiniciar 
   partida" o comience la siguiente tras terminar la actual.
 
+- Cronómetro de partida en tiempo real:
+  * En activity_main.xml integré en la esquina superior derecha un widget Chronometer 
+    acompañado de un icono representativo de reloj de Android, de forma discreta para 
+    no restar protagonismo al tablero de juego.
+  * En MainActivity.java implementé el control del cronómetro sincronizado con el juego: 
+    arranca automáticamente al iniciar la partida (iniciarCronometro), se detiene en 
+    finJuego() (pararCronometro) registrando el tiempo empleado en los logs, y se resetea 
+    a 00:00 tanto al reiniciar como al recuperar una partida guardada (reiniciarCronometro).
+
+
 

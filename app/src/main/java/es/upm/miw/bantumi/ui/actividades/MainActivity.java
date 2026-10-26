@@ -31,6 +31,9 @@ import java.util.Locale;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+import android.widget.Chronometer;
+import android.os.SystemClock;
+
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RecoverGameDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RestartGameDialog;
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     int numInicialSemillas;
     public static final String NOMBRE_FICHERO = "partida_bantumi.txt";
     private boolean puntuacionGuardada = false;
+    private Chronometer cronometro;
+    private boolean cronometroEnMarcha = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
         juegoBantumi = new JuegoBantumi(bantumiVM, turnoInicial, numInicialSemillas);
         crearObservadores();
+
+        cronometro = findViewById(R.id.cronometro);
+        iniciarCronometro();
     }
 
     @Override
@@ -308,6 +316,8 @@ public class MainActivity extends AppCompatActivity {
             puntuacionGuardada = true;
         }
 
+        pararCronometro();
+
         // terminar
         new FinalAlertDialog(texto).show(getSupportFragmentManager(), "ALERT_DIALOG");
     }
@@ -353,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
         if (linea != null) {
             juegoBantumi.deserializa(linea);
             puntuacionGuardada = false;
+            reiniciarCronometro();
             Snackbar.make(
                     findViewById(android.R.id.content),
                     R.string.txtPartidaRecuperadaExito,
@@ -375,6 +386,34 @@ public class MainActivity extends AppCompatActivity {
 
         juegoBantumi.inicializar(turnoInicial, numInicialSemillas);
         puntuacionGuardada = false;
+        reiniciarCronometro();
+    }
+
+    private void iniciarCronometro() {
+        if (!cronometroEnMarcha && cronometro != null) {
+            cronometro.setBase(SystemClock.elapsedRealtime());
+            cronometro.start();
+            cronometroEnMarcha = true;
+            Log.i(LOG_TAG, "MainActivity: cronómetro iniciado");
+        }
+    }
+
+    private void pararCronometro() {
+        if (cronometroEnMarcha && cronometro != null) {
+            cronometro.stop();
+            cronometroEnMarcha = false;
+            Log.i(LOG_TAG, "MainActivity: cronómetro detenido. Tiempo jugado: " + cronometro.getText());
+        }
+    }
+
+    private void reiniciarCronometro() {
+        if (cronometro != null) {
+            cronometro.stop();
+            cronometro.setBase(SystemClock.elapsedRealtime());
+            cronometro.start();
+            cronometroEnMarcha = true;
+            Log.i(LOG_TAG, "MainActivity: cronómetro reiniciado a 00:00");
+        }
     }
 
 }
