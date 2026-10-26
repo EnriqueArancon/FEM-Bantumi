@@ -21,6 +21,7 @@ public class JuegoBantumi {
 
     // Número inicial de semillas
     private int numInicialSemillas;
+    private int ultimaCasillaComputador = -1;
 
     /**
      * <b>Constructor</b><br>
@@ -64,6 +65,7 @@ public class JuegoBantumi {
      */
     public void inicializar(Turno turno) {
         setTurno(turno);
+        this.ultimaCasillaComputador = -1;
         for (int i = 0; i < NUM_POSICIONES; i++)
             setSemillas(
                     i,
@@ -80,6 +82,10 @@ public class JuegoBantumi {
 
     public int getNumInicialSemillas() {
         return numInicialSemillas;
+    }
+
+    public int getUltimaCasillaComputador() {
+        return ultimaCasillaComputador;
     }
 
     /**
@@ -204,6 +210,7 @@ public class JuegoBantumi {
         while (this.turnoActual() == Turno.turnoJ2) {
             int pos = 7 + (int) (Math.random() * 6); // posición aleatoria [7..12]
             if (this.getSemillas(pos) != 0 && (pos < NUM_POSICIONES - 1)) {
+                this.ultimaCasillaComputador = pos;
                 this.jugar(pos);
             }
         }

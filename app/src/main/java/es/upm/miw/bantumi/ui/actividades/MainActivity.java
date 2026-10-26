@@ -33,6 +33,8 @@ import java.text.SimpleDateFormat;
 
 import android.widget.Chronometer;
 import android.os.SystemClock;
+import android.widget.Button;
+import android.content.res.ColorStateList;
 
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RecoverGameDialog;
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean puntuacionGuardada = false;
     private Chronometer cronometro;
     private boolean cronometroEnMarcha = false;
+    private int ultimaCasillaResaltada = -1;
+    private ColorStateList fondoOriginalBoton = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -286,10 +290,14 @@ public class MainActivity extends AppCompatActivity {
             case turnoJ1:
                 Log.i(LOG_TAG, "* Juega Jugador");
                 juegoBantumi.jugar(num);
+                resaltarCasillaJugada(num);
                 break;
             case turnoJ2:
                 Log.i(LOG_TAG, "* Juega Computador");
                 juegoBantumi.juegaComputador();
+                if (juegoBantumi.getUltimaCasillaComputador() != -1) {
+                    resaltarCasillaJugada(juegoBantumi.getUltimaCasillaComputador());
+                }
                 break;
             default: // JUEGO TERMINADO
                 finJuego();
@@ -364,6 +372,7 @@ public class MainActivity extends AppCompatActivity {
             juegoBantumi.deserializa(linea);
             puntuacionGuardada = false;
             reiniciarCronometro();
+            restaurarCasillaResaltada();
             Snackbar.make(
                     findViewById(android.R.id.content),
                     R.string.txtPartidaRecuperadaExito,
@@ -387,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
         juegoBantumi.inicializar(turnoInicial, numInicialSemillas);
         puntuacionGuardada = false;
         reiniciarCronometro();
+        restaurarCasillaResaltada();
     }
 
     private void iniciarCronometro() {
@@ -413,6 +423,42 @@ public class MainActivity extends AppCompatActivity {
             cronometro.start();
             cronometroEnMarcha = true;
             Log.i(LOG_TAG, "MainActivity: cronómetro reiniciado a 00:00");
+        }
+    }
+
+    private void resaltarCasillaJugada(int pos) {
+        restaurarCasillaResaltada();
+
+        String num2digitos = String.format(Locale.getDefault(), "%02d", pos);
+        int idBoton = getResources().getIdentifier("casilla_" + num2digitos, "id", getPackageName());
+        if (idBoton != 0) {
+            Button boton = findViewById(idBoton);
+            if (boton != null) {
+                if (fondoOriginalBoton == null) {
+                    fondoOriginalBoton = boton.getBackgroundTintList();
+                }
+                int colorResaltado = (pos < 6)
+                        ? getColor(android.R.color.holo_orange_light)
+                        : getColor(android.R.color.holo_blue_light);
+
+                boton.setBackgroundTintList(ColorStateList.valueOf(colorResaltado));
+                ultimaCasillaResaltada = pos;
+                Log.i(LOG_TAG, "MainActivity: Casilla " + num2digitos + " resaltada visualmente");
+            }
+        }
+    }
+
+    private void restaurarCasillaResaltada() {
+        if (ultimaCasillaResaltada != -1 && fondoOriginalBoton != null) {
+            String num2digitos = String.format(Locale.getDefault(), "%02d", ultimaCasillaResaltada);
+            int idBoton = getResources().getIdentifier("casilla_" + num2digitos, "id", getPackageName());
+            if (idBoton != 0) {
+                Button boton = findViewById(idBoton);
+                if (boton != null) {
+                    boton.setBackgroundTintList(fondoOriginalBoton);
+                }
+            }
+            ultimaCasillaResaltada = -1;
         }
     }
 

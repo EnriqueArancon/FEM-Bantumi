@@ -209,5 +209,16 @@ opcionales de entre las propuestas en el enunciado:
     finJuego() (pararCronometro) registrando el tiempo empleado en los logs, y se resetea 
     a 00:00 tanto al reiniciar como al recuperar una partida guardada (reiniciarCronometro).
 
+- Marcar visualmente la casilla elegida por cada jugador:
+  * En JuegoBantumi.java registré la variable ultimaCasillaComputador para capturar cuál 
+    es el último hueco sembrado por la inteligencia artificial.
+  * En MainActivity.java implementé los métodos resaltarCasillaJugada(pos) y restaurarCasillaResaltada(). 
+    Cada vez que se realiza un movimiento, el hueco correspondiente se resalta con un tono 
+    diferenciado (naranja cálido para el Jugador 1 y azul claro para el Computador) mediante 
+    setBackgroundTintList, facilitando al jugador ver de un vistazo qué casilla se acaba de jugar.
+  * Al producirse la siguiente jugada o al reiniciar/recuperar la partida, la casilla anterior 
+    restaura de forma automática su apariencia y color original de Material 3.
+
+
 
 
