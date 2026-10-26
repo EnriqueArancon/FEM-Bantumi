@@ -63,7 +63,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Instancia el ViewModel y el juego, y asigna observadores a los huecos
-        numInicialSemillas = getResources().getInteger(R.integer.intNumInicialSemillas);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String defaultSemillas = String.valueOf(getResources().getInteger(R.integer.intNumInicialSemillas));
+        numInicialSemillas = Integer.parseInt(sharedPrefs.getString("numInicialSemillas", defaultSemillas));
+        Log.i(LOG_TAG, "MainActivity.onCreate(): configurando juego con " + numInicialSemillas + " semillas");
+
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
         juegoBantumi = new JuegoBantumi(bantumiVM, JuegoBantumi.Turno.turnoJ1, numInicialSemillas);
         crearObservadores();
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         actualizarNombreJugador();
+        actualizarAjustesJuego();
     }
 
     /**
@@ -84,6 +89,21 @@ public class MainActivity extends AppCompatActivity {
         TextView tvJugador1 = findViewById(R.id.tvPlayer1);
         if (tvJugador1 != null && nombre != null && !nombre.trim().isEmpty()) {
             tvJugador1.setText(nombre);
+        }
+    }
+
+    /**
+     * Comprueba si ha cambiado la configuración de semillas en Ajustes.
+     * Si la partida actual no se ha empezado a jugar, actualiza el tablero automáticamente.
+     */
+    private void actualizarAjustesJuego() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String defaultSemillas = String.valueOf(getResources().getInteger(R.integer.intNumInicialSemillas));
+        int semillasConfiguradas = Integer.parseInt(sharedPrefs.getString("numInicialSemillas", defaultSemillas));
+        if (semillasConfiguradas != numInicialSemillas && !juegoBantumi.partidaModificada()) {
+            Log.i(LOG_TAG, "MainActivity.actualizarAjustesJuego(): Cambiando semillas de " + numInicialSemillas + " a " + semillasConfiguradas);
+            numInicialSemillas = semillasConfiguradas;
+            reiniciarPartida();
         }
     }
 
@@ -266,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
         if (juegoBantumi.getSemillas(6) == 6 * numInicialSemillas) {
             texto = "¡¡¡ EMPATE !!!";
         }
+        Log.i(LOG_TAG, "MainActivity.finJuego(): " + texto + " [J1=" + juegoBantumi.getSemillas(6) + ", J2=" + juegoBantumi.getSemillas(13) + ", inicial=" + numInicialSemillas + "]");
 
         if (!puntuacionGuardada) {
             guardarPuntuacion();
@@ -330,7 +351,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void reiniciarPartida() {
-        juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String defaultSemillas = String.valueOf(getResources().getInteger(R.integer.intNumInicialSemillas));
+        numInicialSemillas = Integer.parseInt(sharedPrefs.getString("numInicialSemillas", defaultSemillas));
+        Log.i(LOG_TAG, "MainActivity.reiniciarPartida(): reiniciando juego con " + numInicialSemillas + " semillas por hueco");
+
+        juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1, numInicialSemillas);
         puntuacionGuardada = false;
     }
 

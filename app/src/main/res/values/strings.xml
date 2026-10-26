@@ -42,6 +42,8 @@
     <string name="prefTituloNombreJugador">Nombre del jugador</string>
     <string name="prefTextoNombreJugador">Pulse para teclear el nombre del jugador</string>
     <string name="prefTituloCategoria2">Ajustes del juego</string>
+    <string name="prefTituloNumSemillas">Número inicial de semillas</string>
+    <string name="prefTextoNumSemillas">Pulse para elegir las semillas por hueco</string>
     <string name="prefTituloCategoria3">Más información…</string>
 
     <!-- Diálogo Final -->

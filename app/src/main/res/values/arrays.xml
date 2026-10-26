@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="numSemillasEntries">
+        <item>2 semillas</item>
+        <item>3 semillas</item>
+        <item>4 semillas (por defecto)</item>
+        <item>5 semillas</item>
+        <item>6 semillas</item>
+    </string-array>
+
+    <string-array name="numSemillasValues">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+</resources>

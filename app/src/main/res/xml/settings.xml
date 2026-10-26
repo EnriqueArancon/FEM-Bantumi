@@ -7,4 +7,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/prefTituloCategoria2">
+
+        <ListPreference
+            app:key="numInicialSemillas"
+            app:title="@string/prefTituloNumSemillas"
+            app:dialogTitle="@string/prefTituloNumSemillas"
+            app:entries="@array/numSemillasEntries"
+            app:entryValues="@array/numSemillasValues"
+            app:defaultValue="4"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

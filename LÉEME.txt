@@ -143,3 +143,25 @@ Para poder consultar el histórico de puntuaciones y ver las mejores partidas:
   * Centralicé el reinicio en el método reiniciarPartida(), reseteando dicha bandera 
     a false tanto al confirmar desde RestartGameDialog como al aceptar una nueva 
     partida en FinalAlertDialog o al recuperar una partida guardada.
+
+
+7. TAREAS OPCIONALES (MEJORAS IMPLEMENTADAS)
+--------------------------------------------------------------------------------
+Para optar a la máxima puntuación en la rúbrica (10/10), he implementado mejoras 
+opcionales de entre las propuestas en el enunciado:
+
+- Modificar el número inicial de semillas desde Ajustes:
+  * En res/values/arrays.xml definí las opciones disponibles (2, 3, 4, 5 y 6 semillas 
+    por hueco) con sus etiquetas visibles y valores numéricos asociados.
+  * En res/xml/settings.xml añadí la categoría "Ajustes del juego" con un ListPreference 
+    (clave "numInicialSemillas"), fijando por defecto 4 semillas y activando 
+    useSimpleSummaryProvider para que muestre el valor actual directamente como resumen.
+  * En JuegoBantumi.java sobrecargué el método inicializar(Turno turno, int numInicialSemillas) 
+    para poder arrancar una partida con cualquier número de semillas de forma dinámica.
+  * En MainActivity.java leo esta preferencia tanto al iniciar (onCreate) como al 
+    reiniciar (reiniciarPartida). Además, en onResume() compruebo si el usuario 
+    ha cambiado las semillas en los Ajustes: si la partida todavía no se ha empezado 
+    a jugar, el tablero se adapta automáticamente al nuevo número sin necesidad 
+    de reiniciar a mano.
+  * He añadido trazas de depuración con Log.i(LOG_TAG, ...) para registrar en el Logcat 
+    los cambios de configuración y la inicialización de cada partida.
