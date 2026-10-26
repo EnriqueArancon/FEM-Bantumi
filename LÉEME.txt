@@ -173,10 +173,20 @@ opcionales de entre las propuestas en el enunciado:
     categoría "Ajustes del juego".
   * En MainActivity.java creé el método auxiliar getTurnoInicialConfigurado() para 
     recuperar la preferencia. Tanto al iniciar como al reiniciar, se asigna el turno 
-    elegido. En caso de comenzar el Computador, se desencadena de inmediato su primera 
-    jugada mediante juegoBantumi.juegaComputador().
+    elegido dejando el tablero en 0 - 0. Si comienza el Computador, el turno queda 
+    resaltado en azul a la espera del primer toque en el tablero para que ejecute su jugada.
   * En onResume() se detecta si el usuario modificó el turno inicial en los Ajustes y, 
     si la partida actual está intacta, se actualiza el tablero automáticamente.
   * Al igual que en la mejora anterior, se añadieron mensajes en el Logcat con Log.i 
     para registrar el turno configurado.
+  * Depuración y corrección durante las pruebas:
+    Al probar el turno inicial con el Computador, detecté que la máquina hacía su jugada 
+    automática en el mismo milisegundo de reiniciar, de modo que el tablero no se veía 
+    en 0 - 0 (los almacenes ya tenían semillas movidas por la máquina). Lo corregí 
+    eliminando la llamada prematura: ahora el juego arranca impecable en 0 - 0 con el 
+    turno resaltado en azul en el Computador, y en cuanto el jugador pulsa en la pantalla, 
+    la máquina realiza su movimiento.
+  * Igualmente, en PuntuacionDao afiné la consulta de mejores resultados añadiendo 
+    un criterio de desempate ("ORDER BY max_semillas DESC, id DESC") para que las 
+    partidas con igual número de semillas se desempaten mostrando primero la más reciente.
 

@@ -72,10 +72,6 @@ public class MainActivity extends AppCompatActivity {
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
         juegoBantumi = new JuegoBantumi(bantumiVM, turnoInicial, numInicialSemillas);
         crearObservadores();
-
-        if (turnoInicial == JuegoBantumi.Turno.turnoJ2) {
-            juegoBantumi.juegaComputador();
-        }
     }
 
     @Override
@@ -379,10 +375,6 @@ public class MainActivity extends AppCompatActivity {
 
         juegoBantumi.inicializar(turnoInicial, numInicialSemillas);
         puntuacionGuardada = false;
-
-        if (turnoInicial == JuegoBantumi.Turno.turnoJ2) {
-            juegoBantumi.juegaComputador();
-        }
     }
 
 }

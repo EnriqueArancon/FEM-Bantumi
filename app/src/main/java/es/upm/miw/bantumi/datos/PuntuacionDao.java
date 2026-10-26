@@ -12,7 +12,7 @@ public interface PuntuacionDao {
     @Insert
     long insert(Puntuacion puntuacion);
 
-    @Query("SELECT * FROM puntuaciones ORDER BY max_semillas DESC LIMIT 10")
+    @Query("SELECT * FROM puntuaciones ORDER BY max_semillas DESC, id DESC LIMIT 10")
     List<Puntuacion> getMejoresResultados();
 
     @Query("SELECT * FROM puntuaciones")
