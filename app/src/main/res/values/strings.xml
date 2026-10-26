@@ -44,6 +44,8 @@
     <string name="prefTituloCategoria2">Ajustes del juego</string>
     <string name="prefTituloNumSemillas">Número inicial de semillas</string>
     <string name="prefTextoNumSemillas">Pulse para elegir las semillas por hueco</string>
+    <string name="prefTituloTurnoInicial">Turno inicial</string>
+    <string name="prefTextoTurnoInicial">Pulse para elegir quién comienza la partida</string>
     <string name="prefTituloCategoria3">Más información…</string>
 
     <!-- Diálogo Final -->

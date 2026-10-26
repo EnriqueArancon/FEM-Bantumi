@@ -18,6 +18,15 @@
             app:defaultValue="4"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            app:key="turnoInicial"
+            app:title="@string/prefTituloTurnoInicial"
+            app:dialogTitle="@string/prefTituloTurnoInicial"
+            app:entries="@array/turnoInicialEntries"
+            app:entryValues="@array/turnoInicialValues"
+            app:defaultValue="turnoJ1"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

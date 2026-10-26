@@ -15,4 +15,14 @@
         <item>5</item>
         <item>6</item>
     </string-array>
+
+    <string-array name="turnoInicialEntries">
+        <item>Jugador 1 (por defecto)</item>
+        <item>Computador</item>
+    </string-array>
+
+    <string-array name="turnoInicialValues">
+        <item>turnoJ1</item>
+        <item>turnoJ2</item>
+    </string-array>
 </resources>

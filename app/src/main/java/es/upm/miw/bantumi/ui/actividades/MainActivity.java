@@ -66,11 +66,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String defaultSemillas = String.valueOf(getResources().getInteger(R.integer.intNumInicialSemillas));
         numInicialSemillas = Integer.parseInt(sharedPrefs.getString("numInicialSemillas", defaultSemillas));
-        Log.i(LOG_TAG, "MainActivity.onCreate(): configurando juego con " + numInicialSemillas + " semillas");
+        JuegoBantumi.Turno turnoInicial = getTurnoInicialConfigurado();
+        Log.i(LOG_TAG, "MainActivity.onCreate(): configurando juego con turno=" + turnoInicial + ", semillas=" + numInicialSemillas);
 
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
-        juegoBantumi = new JuegoBantumi(bantumiVM, JuegoBantumi.Turno.turnoJ1, numInicialSemillas);
+        juegoBantumi = new JuegoBantumi(bantumiVM, turnoInicial, numInicialSemillas);
         crearObservadores();
+
+        if (turnoInicial == JuegoBantumi.Turno.turnoJ2) {
+            juegoBantumi.juegaComputador();
+        }
     }
 
     @Override
@@ -93,15 +98,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Comprueba si ha cambiado la configuración de semillas en Ajustes.
+     * Obtiene el turno inicial configurado en las Preferencias.
+     */
+    private JuegoBantumi.Turno getTurnoInicialConfigurado() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String turnoPref = sharedPrefs.getString("turnoInicial", "turnoJ1");
+        return "turnoJ2".equals(turnoPref) ? JuegoBantumi.Turno.turnoJ2 : JuegoBantumi.Turno.turnoJ1;
+    }
+
+    /**
+     * Comprueba si ha cambiado la configuración de semillas o turno en Ajustes.
      * Si la partida actual no se ha empezado a jugar, actualiza el tablero automáticamente.
      */
     private void actualizarAjustesJuego() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String defaultSemillas = String.valueOf(getResources().getInteger(R.integer.intNumInicialSemillas));
         int semillasConfiguradas = Integer.parseInt(sharedPrefs.getString("numInicialSemillas", defaultSemillas));
-        if (semillasConfiguradas != numInicialSemillas && !juegoBantumi.partidaModificada()) {
-            Log.i(LOG_TAG, "MainActivity.actualizarAjustesJuego(): Cambiando semillas de " + numInicialSemillas + " a " + semillasConfiguradas);
+        JuegoBantumi.Turno turnoConfigurado = getTurnoInicialConfigurado();
+
+        boolean cambioSemillas = (semillasConfiguradas != numInicialSemillas);
+        boolean cambioTurno = (juegoBantumi != null && turnoConfigurado != juegoBantumi.turnoActual());
+
+        if ((cambioSemillas || cambioTurno) && !juegoBantumi.partidaModificada()) {
+            Log.i(LOG_TAG, "MainActivity.actualizarAjustesJuego(): Cambios detectados en Ajustes (semillas=" + semillasConfiguradas + ", turno=" + turnoConfigurado + ")");
             numInicialSemillas = semillasConfiguradas;
             reiniciarPartida();
         }
@@ -354,10 +373,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String defaultSemillas = String.valueOf(getResources().getInteger(R.integer.intNumInicialSemillas));
         numInicialSemillas = Integer.parseInt(sharedPrefs.getString("numInicialSemillas", defaultSemillas));
-        Log.i(LOG_TAG, "MainActivity.reiniciarPartida(): reiniciando juego con " + numInicialSemillas + " semillas por hueco");
+        JuegoBantumi.Turno turnoInicial = getTurnoInicialConfigurado();
 
-        juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1, numInicialSemillas);
+        Log.i(LOG_TAG, "MainActivity.reiniciarPartida(): reiniciando juego con turno=" + turnoInicial + ", semillas=" + numInicialSemillas);
+
+        juegoBantumi.inicializar(turnoInicial, numInicialSemillas);
         puntuacionGuardada = false;
+
+        if (turnoInicial == JuegoBantumi.Turno.turnoJ2) {
+            juegoBantumi.juegaComputador();
+        }
     }
 
 }

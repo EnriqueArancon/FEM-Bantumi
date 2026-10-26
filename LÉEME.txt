@@ -165,3 +165,18 @@ opcionales de entre las propuestas en el enunciado:
     de reiniciar a mano.
   * He añadido trazas de depuración con Log.i(LOG_TAG, ...) para registrar en el Logcat 
     los cambios de configuración y la inicialización de cada partida.
+
+- Elegir qué jugador realiza el primer movimiento desde Ajustes:
+  * En res/values/arrays.xml creé los arrays de opciones para el turno inicial: "Jugador 1 
+    (por defecto)" (turnoJ1) y "Computador" (turnoJ2).
+  * En res/xml/settings.xml añadí el ListPreference (clave "turnoInicial") dentro de la 
+    categoría "Ajustes del juego".
+  * En MainActivity.java creé el método auxiliar getTurnoInicialConfigurado() para 
+    recuperar la preferencia. Tanto al iniciar como al reiniciar, se asigna el turno 
+    elegido. En caso de comenzar el Computador, se desencadena de inmediato su primera 
+    jugada mediante juegoBantumi.juegaComputador().
+  * En onResume() se detecta si el usuario modificó el turno inicial en los Ajustes y, 
+    si la partida actual está intacta, se actualiza el tablero automáticamente.
+  * Al igual que en la mejora anterior, se añadieron mensajes en el Logcat con Log.i 
+    para registrar el turno configurado.
+
