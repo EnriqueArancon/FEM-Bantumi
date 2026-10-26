@@ -190,3 +190,14 @@ opcionales de entre las propuestas en el enunciado:
     un criterio de desempate ("ORDER BY max_semillas DESC, id DESC") para que las 
     partidas con igual número de semillas se desempaten mostrando primero la más reciente.
 
+- Decisión de diseño sobre la aplicación de ajustes en caliente (UX):
+  En onResume() tomé deliberadamente la decisión de comprobar si la partida actual ha 
+  sido modificada (!juegoBantumi.partidaModificada()). Si el jugador aún no ha comenzado 
+  a jugar, los cambios de semillas y de turno inicial se reflejan de inmediato en el tablero 
+  al volver de la pantalla de Ajustes. Sin embargo, si la partida ya está a medias, no 
+  se reinicia automáticamente para no fastidiar el progreso del usuario ni borrarle 
+  una partida en curso por sorpresa. En ese caso, la nueva configuración se queda guardada 
+  en las preferencias y se aplicará limpiamente en cuanto el usuario pulse en "Reiniciar 
+  partida" o comience la siguiente tras terminar la actual.
+
+
